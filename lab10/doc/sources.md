@@ -1,10 +1,10 @@
-| 파일 이름 | 학명 | Accession | 길이(bp) | 확인 방법 |
-|-----------|------|-----------|---------|-----------|
-| rbcL_arabidopsis | Arabidopsis thaliana | OK432498.1 | 1440 | 터미널에 나오는 결과를 직접 대조 |
-| rbcL_ginseng | Panax ginseng | 번호 | 길이 | 서열이 범위제한보다 커서 결과가 나오지 않음 |
-| rbcL_rice | Oryza sativa | L24073.1 | 1355 | 터미널에 나오는 결과를 직접 대조 |
-| rbcL_maize | Zea mays | Z11973.1 | 1431 | 터미널에 나오는 결과를 직접 대조 |
-| rbcL_ginkgo | Ginkgo biloba | KF221173.1 | 1317 | 터미널에 나오는 결과를 직접 대조 |
-| rbcL_pine | Pinus thunbergii | JQ512595.1 | 1428 | 터미널에 나오는 결과를 직접 대조 |
-| rbcL_fern | Adiantum capillus-veneris | MW620303.1 | 1308 | 터미널에 나오는 결과를 직접 대조 |
-| rbcL_liverwort | Marchantia polymorpha | LC536762.1 | 1399 | 터미널에 나오는 결과를 직접 대조 |
+| 파일 이름 | 학명 | Accession | 길이(bp) | 확인 방법 | VERSION | CDS 위치 | 번역 일치 |
+|-----------|------|-----------|---------|-----------|---------|----------|-----------|
+| rbcL_arabidopsis | Arabidopsis thaliana | OK432498.1 | 1440 | 터미널에 나오는 결과를 직접 대조 | KU739560.1 | `[<0:>1408](+)` | 같음 |
+| rbcL_ginseng | Panax ginseng | 번호 | 길이 | 서열이 범위제한보다 커서 결과가 나오지 않음 | 확인 필요 | 확인 필요 | 확인 필요 |
+| rbcL_rice | Oryza sativa | L24073.1 | 1355 | 터미널에 나오는 결과를 직접 대조 | L24073.1 | `[34:1240](+)` | 같음 |
+| rbcL_maize | Zea mays | Z11973.1 | 1431 | 터미널에 나오는 결과를 직접 대조 | Z11973.1 | `[0:1431](+)` | 같음 |
+| rbcL_ginkgo | Ginkgo biloba | KF221173.1 | 1317 | 터미널에 나오는 결과를 직접 대조 | KF221173.1 | `[<0:>1317](+)` | 같음 |
+| rbcL_pine | Pinus thunbergii | JQ512595.1 | 1428 | 터미널에 나오는 결과를 직접 대조 | JQ512595.1 | `[0:1428](+)` | 같음 |
+| rbcL_fern | Adiantum capillus-veneris | MW620303.1 | 1308 | 터미널에 나오는 결과를 직접 대조 | MT657436.1 | `[<0:>1309](+)` | 같음 |
+| rbcL_liverwort | Marchantia polymorpha | LC536762.1 | 1399 | 터미널에 나오는 결과를 직접 대조 | LC536762.1 | `[<0:1399](+)` | 같음 |
