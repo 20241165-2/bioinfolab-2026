@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>parse_fastq.py 사용 설명서</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body {
+    font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", "Noto Sans KR", "Nanum Gothic", sans-serif;
+    line-height: 1.65; color: #222; background: #fff;
+    max-width: 820px; margin: 0 auto; padding: 24px 16px; font-size: 14px;
+  }
+  h1 { font-size: 24px; border-bottom: 2px solid #333; padding-bottom: 6px; }
+  h2 { font-size: 18px; margin-top: 28px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  h3 { font-size: 15px; margin-top: 20px; }
+  code { font-family: Consolas, "D2Coding", "Courier New", monospace; background: #f3f3f3; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+  pre { background: #f6f8fa; border: 1px solid #ddd; border-radius: 4px; padding: 10px 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; page-break-inside: avoid; }
+  pre code { background: none; padding: 0; font-size: 12.5px; }
+  table { border-collapse: collapse; margin: 10px 0; page-break-inside: avoid; }
+  th, td { border: 1px solid #bbb; padding: 5px 10px; text-align: left; }
+  th { background: #eee; }
+  li { margin: 4px 0; }
+  .c { color: #6a737d; }
+  h2, h3 { page-break-after: avoid; }
+</style>
+</head>
+<body>
+
+<h1>parse_fastq.py 사용 설명서</h1>
+
+<h2>1. 개요</h2>
+<p><code>parse_fastq.py</code> 는 FASTQ 파일을 읽어 read 개수와 첫 번째 read 의 정보(이름, 서열, 길이)를 출력하는 스크립트이다.
+외부 라이브러리 없이 파이썬 기본 문법만 사용한다.</p>
+<ul>
+  <li>위치: <code>lab11/src/parse_fastq.py</code></li>
+  <li>입력: FASTQ 파일 1개</li>
+  <li>출력: 화면(표준 출력)에 요약 4줄</li>
+</ul>
+
+<h2>2. 사용법</h2>
+<pre><code>$ cd lab11/src
+$ python3 parse_fastq.py &lt;FASTQ 파일&gt;</code></pre>
+<table>
+  <tr><th>인자</th><th>설명</th></tr>
+  <tr><td><code>&lt;FASTQ 파일&gt;</code></td><td>읽을 FASTQ 파일 경로 (<code>sys.argv[1]</code>)</td></tr>
+</table>
+
+<h3>실행 예</h3>
+<pre><code>$ python3 parse_fastq.py ../data/SRR1553607_1.fastq
+read 개수: 203445
+첫 read 이름: SRR1553607.1 1 length=101
+첫 read 서열: GTTAGCGTTGTTGATCGCGACGCAACAACTGGTAAAGAATCTGGAAGAAGGATATCAGTTCAAACGCTCAAGCGAGATGATGGATATTTTTGAACGACTCA
+첫 read 길이: 101</code></pre>
+<p><code>SRR1553607_2.fastq</code>(paired-end 의 두 번째 파일)도 같은 방법으로 실행하며, read 개수는 203445 개로 <code>_1</code> 파일과 같다.</p>
+
+<h2>3. FASTQ 형식</h2>
+<p>FASTQ 는 read 하나를 <strong>4줄</strong>로 저장한다.</p>
+<pre><code>@SRR1553607.1 1 length=101        <span class="c">← 1줄: '@' + read 이름</span>
+GTTAGCGTTGTTGATCGCGACG...          <span class="c">← 2줄: 염기 서열</span>
++SRR1553607.1 1 length=101        <span class="c">← 3줄: '+' (이름은 생략될 수 있음)</span>
+BB@FFFFFHHHHHJJJJJJJJJ...          <span class="c">← 4줄: 품질 점수 (서열과 길이가 같다)</span></code></pre>
+
+<h2>4. 코드 설명</h2>
+<h3><code>read_fastq(filename)</code></h3>
+<p>FASTQ 파일을 읽어 <code>(이름, 서열, 품질)</code> 튜플의 리스트를 돌려준다.</p>
+<pre><code>def read_fastq(filename):
+    records = []
+    with open(filename) as f:
+        lines = f.readlines()          <span class="c"># 파일 전체를 줄 단위 리스트로 읽음</span>
+
+    for i in range(0, len(lines), 4):  <span class="c"># 4줄씩 건너뛰며 반복</span>
+        name = lines[i].rstrip()[1:]   <span class="c"># 1줄: 줄바꿈 제거 후 맨 앞 '@' 제거</span>
+        seq = lines[i + 1].rstrip()    <span class="c"># 2줄: 서열</span>
+        qual = lines[i + 3].rstrip()   <span class="c"># 4줄: 품질 (3줄 '+' 는 건너뜀)</span>
+        records.append((name, seq, qual))
+
+    return records</code></pre>
+<table>
+  <tr><th>반환값 위치</th><th>내용</th></tr>
+  <tr><td><code>reads[k][0]</code></td><td>k 번째 read 의 이름</td></tr>
+  <tr><td><code>reads[k][1]</code></td><td>k 번째 read 의 서열</td></tr>
+  <tr><td><code>reads[k][2]</code></td><td>k 번째 read 의 품질 문자열</td></tr>
+</table>
+
+<h3>최상위 코드</h3>
+<pre><code>reads = read_fastq(sys.argv[1])
+print("read 개수:", len(reads))
+print("첫 read 이름:", reads[0][0])
+print("첫 read 서열:", reads[0][1])
+print("첫 read 길이:", len(reads[0][1]))</code></pre>
+<ul>
+  <li>read 개수 = 리스트 길이 = 파일 줄 수 ÷ 4 (813780 ÷ 4 = 203445)</li>
+</ul>
+
+<h2>5. 주의할 점</h2>
+<ol>
+  <li><strong>인자를 주지 않으면 오류가 난다.</strong><br>
+    인자 개수를 확인하지 않으므로 <code>python3 parse_fastq.py</code> 만 실행하면 <code>IndexError: list index out of range</code> 가 난다.</li>
+  <li><strong>파일 전체를 메모리에 올린다.</strong><br>
+    <code>readlines()</code> 로 모든 줄을 한꺼번에 읽으므로 수 GB 크기의 FASTQ 에서는 메모리가 부족할 수 있다.</li>
+  <li><strong>압축 파일(<code>.fastq.gz</code>)은 읽지 못한다.</strong> 먼저 <code>gunzip</code> 으로 풀어야 한다.</li>
+  <li><strong>형식 검사를 하지 않는다.</strong><br>
+    줄 수가 4의 배수가 아니거나 첫 줄이 <code>@</code> 로 시작하지 않아도 그대로 처리하거나 오류로 멈춘다.</li>
+  <li><strong>빈 파일이면</strong> <code>reads[0]</code> 에서 <code>IndexError</code> 가 난다.</li>
+</ol>
+
+<h2>6. 데이터 파일</h2>
+<p><code>lab11/data/SRR1553607_1.fastq</code>, <code>SRR1553607_2.fastq</code> 는 <code>.gitignore</code> 로 제외되어 커밋되지 않는다.
+없으면 다시 내려받아야 한다.</p>
+
+</body>
+</html>
