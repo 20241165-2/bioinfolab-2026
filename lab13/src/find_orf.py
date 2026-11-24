@@ -25,19 +25,30 @@ def reverse_complement(seq):
         result = result + complement.get(base, "N")
     return result[::-1]
  
+def to_original(s, e, strand, length):
+    """find_orfs 가 준 위치(0부터, 끝 미포함)를 원래 서열 기준 1부터 시작하는 좌표(끝 포함)로 바꾼다.
+    - 가닥이면 역상보 서열의 위치를 원래 서열 위치로 뒤집는다. 항상 시작 < 끝 이 되게 돌려준다."""
+    if strand == "+":
+        return s + 1, e
+    else:
+        return length - e + 1, length - s
+
 seq = sys.argv[1].upper()
 rc_seq = reverse_complement(seq)
- 
-# 정방향 틀 +1, +2, +3
-for frame in [0, 1, 2]:
-    orfs = find_orfs(seq, frame)
-    print("틀 +" + str(frame + 1), ":", orfs)
-    for s, e in orfs:
-        print("   ", seq[s:e], "길이", e - s)
- 
-# 역상보 틀 -1, -2, -3 (위치는 역상보 서열 기준)
-for frame in [0, 1, 2]:
-    orfs = find_orfs(rc_seq, frame)
-    print("틀 -" + str(frame + 1), ":", orfs)
-    for s, e in orfs:
-        print("   ", rc_seq[s:e], "길이", e - s)
+length = len(seq)
+
+# 정방향 틀 +1, +2, +3 과 역상보 틀 -1, -2, -3 을 같은 방식으로 검사한다.
+# 좌표는 모두 원래 서열 기준(1부터, 끝 포함)이고, 가닥(+/-)을 함께 적는다.
+for strand in ["+", "-"]:
+    if strand == "+":
+        target = seq
+    else:
+        target = rc_seq
+
+    for frame in [0, 1, 2]:
+        orfs = find_orfs(target, frame)
+        print("틀 " + strand + str(frame + 1), ": ORF", len(orfs), "개")
+        for s, e in orfs:
+            start, end = to_original(s, e, strand, length)
+            print("    " + str(start) + "-" + str(end), "(" + strand + ")", "길이", e - s)
+            print("   ", target[s:e])
